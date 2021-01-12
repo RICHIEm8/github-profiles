@@ -1,3 +1,4 @@
+import { LinkIcon } from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
@@ -9,31 +10,33 @@ import {
   StatLabel,
   StatNumber,
   Text,
-  UnorderedList,
 } from '@chakra-ui/react';
-import { LinkIcon } from '@chakra-ui/icons';
 import React from 'react';
 
 export const Profile = () => {
   return (
-    <Flex justifyContent="space-between" border="solid 1px blue">
-      <Box border="solid 1px red" pl={5}>
+    <Flex justifyContent="space-between">
+      <Box pl={10}>
         <Flex>
           <Avatar></Avatar>
-          <Text>Richiem8</Text>
+          <Text pl="5" pt="3">
+            Richiem8
+          </Text>
         </Flex>
-        <Stat>
-          <StatLabel>Followers</StatLabel>
-          <StatNumber>3</StatNumber>
-        </Stat>
-        <Stat>
-          <StatLabel>Repositories</StatLabel>
-          <StatNumber>10</StatNumber>
-        </Stat>
+        <Flex pt="3">
+          <Stat className="followers">
+            <StatLabel>Followers</StatLabel>
+            <StatNumber>3</StatNumber>
+          </Stat>
+          <Stat className="repositories" pl="5">
+            <StatLabel>Repositories</StatLabel>
+            <StatNumber>10</StatNumber>
+          </Stat>
+        </Flex>
       </Box>
 
-      <Box border="solid 1px green" pr={300}>
-        <List>
+      <Box pr={300} mt={-5}>
+        <List py={5}>
           <ListItem>
             <ListIcon as={LinkIcon} color="green.500" />
             todo-app
