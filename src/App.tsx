@@ -1,7 +1,7 @@
-import { Box, Button, Flex, Heading, Input } from '@chakra-ui/react';
-import React, { useState } from 'react';
-import { Profile } from './Profile';
+import { Alert, AlertIcon, AlertTitle, Button, Flex, Heading, Input } from '@chakra-ui/react';
+import React, { FormEvent, useState } from 'react';
 import { combinedGitData, GitData } from './api/github';
+import { Profile } from './Profile';
 
 export const App = () => {
   const [query, setQuery] = useState('');
@@ -13,24 +13,54 @@ export const App = () => {
       const gitUserData = await combinedGitData(username);
       setData(gitUserData);
       setError(null);
-      console.log(data);
     } catch (err) {
       setError(err);
     }
   };
 
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    fetchData(query);
+    setQuery('');
+  };
+
   return (
-    <Box fontSize="xl">
-      <Heading textAlign="center">Github Profiles</Heading>
-      <Flex m={3}>
-        <Input
-          placeholder="Search user..."
-          onChange={(e) => setQuery(e.target.value)}
-          value={query}
-        />
-        <Button onClick={(e) => fetchData(query)}>Search</Button>
+    <Flex fontSize="xl" flexDirection="column">
+      <Flex justifyContent="center" my={3}>
+        <Heading>Github Profiles</Heading>
       </Flex>
-      <Profile />
-    </Box>
+      <Flex justifyContent="center" borderBottom="solid 1px black">
+        <form onSubmit={onSubmit}>
+          <Input
+            placeholder="Search user..."
+            onChange={(e) => setQuery(e.target.value)}
+            value={query}
+            w={300}
+            mb={5}
+          />
+          <Button type="submit">Search</Button>
+        </form>
+      </Flex>
+      {error ? (
+        <Alert status="error" justifyContent="center">
+          <AlertIcon />
+          <AlertTitle>
+            {error.message} - Ensure username is correct or refer to error code.
+          </AlertTitle>
+        </Alert>
+      ) : null}
+      {data ? (
+        <Profile
+          avatar={data.avatar}
+          username={data.username}
+          profile_url={data.profile_url}
+          name={data.name}
+          bio={data.bio}
+          followers={data.followers}
+          repoCount={data.repoCount}
+          repositories={data.repositories}
+        />
+      ) : null}
+    </Flex>
   );
 };

@@ -1,8 +1,8 @@
-import { LinkIcon } from '@chakra-ui/icons';
+import { LinkIcon, StarIcon } from '@chakra-ui/icons';
 import {
   Avatar,
-  Box,
   Flex,
+  Link,
   List,
   ListIcon,
   ListItem,
@@ -12,49 +12,62 @@ import {
   Text,
 } from '@chakra-ui/react';
 import React from 'react';
+import _ from 'lodash';
+import { GithubUserRepoResponse } from './api/github';
 
-export const Profile = () => {
+interface Props {
+  avatar: string;
+  username: string;
+  profile_url: string;
+  name: string;
+  bio: string;
+  followers: number;
+  repoCount: number;
+  repositories: GithubUserRepoResponse[];
+}
+
+export const Profile = (props: Props) => {
+  const { avatar, username, profile_url, name, bio, followers, repoCount, repositories } = props;
+  const topRepos = _.map(repositories, (repo) => {
+    return (
+      <ListItem key={repo.name}>
+        <ListIcon as={LinkIcon} color="green.500" />
+        <Link href={repo.html_url}>{repo.name}</Link> <ListIcon as={StarIcon} color="yellow.500" />{' '}
+        {repo.stargazers_count}
+      </ListItem>
+    );
+  });
   return (
-    <Flex justifyContent="space-between">
-      <Box pl={10}>
+    <Flex justify="space-around" px={'10%'}>
+      <Flex flexDir="column" mt={5} ml={10} w={400}>
         <Flex>
-          <Avatar></Avatar>
-          <Text pl="5" pt="3">
-            Richiem8
-          </Text>
+          <Avatar src={avatar} size="2xl" />
+          <Flex flexDir="column" pl={5} justify="center">
+            <Text fontSize={25}>{name}</Text>
+            <Text pt="3" textDecor="underline">
+              <Link href={profile_url}>@{username}</Link>
+            </Text>
+            <Text pt={5} fontSize={10}>
+              {bio}
+            </Text>
+          </Flex>
         </Flex>
-        <Flex pt="3">
-          <Stat className="followers">
+        <Flex justify="space-between" pt={5}>
+          <Stat>
             <StatLabel>Followers</StatLabel>
-            <StatNumber>3</StatNumber>
+            <StatNumber>{followers}</StatNumber>
           </Stat>
-          <Stat className="repositories" pl="5">
+          <Stat>
             <StatLabel>Repositories</StatLabel>
-            <StatNumber>10</StatNumber>
+            <StatNumber>{repoCount}</StatNumber>
           </Stat>
         </Flex>
-      </Box>
-
-      <Box pr={300} mt={-5}>
-        <List py={5}>
-          <ListItem>
-            <ListIcon as={LinkIcon} color="green.500" />
-            todo-app
-          </ListItem>
-          <ListItem>
-            <ListIcon as={LinkIcon} color="green.500" />
-            calculator-app
-          </ListItem>
-          <ListItem>
-            <ListIcon as={LinkIcon} color="green.500" />
-            weather-app
-          </ListItem>
-          <ListItem>
-            <ListIcon as={LinkIcon} color="green.500" />
-            github-profiles-app
-          </ListItem>
+      </Flex>
+      <Flex>
+        <List pt={5} spacing={5}>
+          {topRepos}
         </List>
-      </Box>
+      </Flex>
     </Flex>
   );
 };

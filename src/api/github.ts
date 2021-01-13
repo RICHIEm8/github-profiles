@@ -1,20 +1,22 @@
 import axios from 'axios';
 import _ from 'lodash';
 
-interface GithubUserResponse {
+export interface GithubUserResponse {
   avatar_url: string;
   login: string;
   name: string;
   bio: string;
   followers: number;
   public_repos: number;
+  html_url: string;
 }
 
-interface GithubUserRepoResponse {
+export interface GithubUserRepoResponse {
   name: string;
   stargazers_count: number;
   forks_count: number;
   description: string;
+  html_url: string;
 }
 
 export interface GitData {
@@ -23,6 +25,7 @@ export interface GitData {
   name: string;
   bio: string;
   followers: number;
+  profile_url: string;
   repoCount: number;
   repositories: GithubUserRepoResponse[];
 }
@@ -39,7 +42,7 @@ const githubUserRepos = async (username: string): Promise<GithubUserRepoResponse
 
 export const combinedGitData = async (username: string): Promise<GitData> => {
   const user = await githubUser(username);
-  const { avatar_url, login, name, bio, followers, public_repos } = user;
+  const { avatar_url, login, name, bio, followers, public_repos, html_url } = user;
   const repositories = await githubUserRepos(username);
   const filteredRepos = _.orderBy(repositories, ['stargazers_count'], ['desc']).slice(0, 4);
 
@@ -47,6 +50,7 @@ export const combinedGitData = async (username: string): Promise<GitData> => {
     avatar: avatar_url,
     username: login,
     name,
+    profile_url: html_url,
     bio,
     followers,
     repoCount: public_repos,
